@@ -1,5 +1,3 @@
-
-/**TTTTTEEEEEEEEEEEESSSSSSSSSSSTTTTTTT***/
 /**
  * <copyright>
  *
