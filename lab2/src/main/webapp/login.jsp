@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de"">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Business Informatics Group Jeopardy! - Login</title>
-    <link rel="stylesheet" type="text/css" href="style/base.css" />
-    <link rel="stylesheet" type="text/css" href="style/screen.css" />
-</head>
-<body id="login-page">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<%@ page import="java.util.*" %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Business Informatics Group Jeopardy! - Login</title>
+        <link rel="stylesheet" type="text/css" href="style/base.css" />
+        <link rel="stylesheet" type="text/css" href="style/screen.css" />
+    </head>
+    
+    <body id="login-page">
       <a class="accessibility" href="#login">Zum Login springen</a>
 	  <a class="accessibility" title="Klicke hier um dich zu registrieren" href="register.xhtml" accesskey="r">Registrieren</a>  
       <!-- Header -->
@@ -24,7 +25,7 @@
         <div role="main">
             <section id="login" aria-labelledby="loginheading">
                <h2 id="loginheading" class="accessibility">Login</h2>
-                <form action="BigJeopardyServlet" method="post">
+                <form action="BigJeopardyServlet" method="get">
                     <fieldset>
                         <legend id="logindata">Login</legend>
                         <label for="username">Benutzername:</label>
@@ -44,6 +45,6 @@
         </div>
 
         <!-- footer -->
-        <footer role="contentinfo">� 2015 BIG Jeopardy</footer>
+        <footer role="contentinfo">© 2015 BIG Jeopardy</footer>
     </body>
 </html>
