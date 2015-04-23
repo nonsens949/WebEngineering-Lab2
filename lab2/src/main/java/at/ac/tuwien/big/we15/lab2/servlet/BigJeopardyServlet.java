@@ -16,8 +16,10 @@ import javax.servlet.http.HttpSession;
 
 import at.ac.tuwien.big.we15.lab2.api.Answer;
 import at.ac.tuwien.big.we15.lab2.api.Category;
+import at.ac.tuwien.big.we15.lab2.api.GameState;
 import at.ac.tuwien.big.we15.lab2.api.Question;
 import at.ac.tuwien.big.we15.lab2.api.QuestionDataProvider;
+import at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl;
 import at.ac.tuwien.big.we15.lab2.api.impl.ServletJeopardyFactory;
 
 public class BigJeopardyServlet extends HttpServlet implements Servlet {
@@ -55,7 +57,8 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 		if(parameterNameList.contains("login")){
 			System.out.println("input name= login ");
 			//INPUT BEHANDLUNG BEI LOGIN BEI DEM BEISIPEL NOCH NICHT BENOETIGT
-			
+			HttpSession s = req.getSession();
+			s.setAttribute("gameState", new GameStateImpl());
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}
@@ -71,14 +74,18 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			List<Category> categories = provider.getCategoryData();
 			// category has name and holds questions
 			// questions have attributes and answers
+			Question question = null;
 			for(Category c : categories){
 				List<Question> questionList = c.getQuestions();
 				for(Question q : questionList){
 					if(q.getId() == questionId){
-						s.setAttribute("currentQuestion", q);
+						question = q;
 					}
 				}
 			}
+			s.setAttribute("simpleQuestion", question);
+			
+			
 			
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/question.jsp");
 			dispatcher.forward(req, resp);
@@ -87,11 +94,37 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 		if(parameterNameList.contains("answer_submit")){
 			HttpSession s = req.getSession();
 			System.out.println("parameternamelist contains answer_submit");
+			
 			String[] answers = req.getParameterValues("answers");
+			ArrayList<Integer> answerList = new ArrayList<Integer>();
+			for(String st : answers){
+				answerList.add(Integer.parseInt(st));
+			}
+					
 			//TODO geht vielleicht schoener?
-			Question currentQuestion = (Question)s.getAttribute("currentQuestion");
+			Question currentQuestion = (Question)s.getAttribute("simpleQuestion");
 			System.out.println("currentQuestionId = " + currentQuestion.getId());
+			System.out.println("currentQuestionText = " + currentQuestion.getText());
+			
 			List<Answer> correctAnswers = currentQuestion.getCorrectAnswers();
+			List<Answer> wrongAnswers = currentQuestion.getAllAnswers();
+			wrongAnswers.removeAll(correctAnswers);
+			boolean answerUser = (answers.length == correctAnswers.size());
+			for(Answer a : correctAnswers){
+				answerUser = (answerUser && answerList.contains(a.getId()));
+			}
+			GameState gs = (GameState)s.getAttribute("gameState");
+			
+			if(answerUser){
+				gs.raiseScorePlayer1(currentQuestion.getValue());
+			} 
+			else {
+				gs.reduceScorePlayer1(currentQuestion.getValue());
+			}
+			gs.incrementRoundCounter();
+			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
+			dispatcher.forward(req, resp);
 		}
 		
 	}

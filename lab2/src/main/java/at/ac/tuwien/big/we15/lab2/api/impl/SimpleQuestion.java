@@ -31,6 +31,12 @@ public class SimpleQuestion implements Question {
 	private List<Answer> rightAnswers;
 
 	private Category category;
+	
+	private String test = "das ist ein test";
+	
+	public String getTest(){
+		return this.test;
+	}
 
 	public SimpleQuestion() {
 		this.text = "";

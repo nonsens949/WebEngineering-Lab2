@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import = "java.util.*" %>
+<%@ page import = "at.ac.tuwien.big.we15.lab2.api.Answer" %>
+<jsp:useBean id="simpleQuestion" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.SimpleQuestion"/>
+<jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
 <!DOCTYPE html>
-<html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+<html  xmlns="http://www.w3.org/1999/xhtml" lang="de">
 <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,7 +47,7 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints">2000 €</td>
+                     <td class="playerpoints"><%= gameState.getScorePlayer1() %></td>
                   </tr>
                </table>
             </section>
@@ -57,24 +61,27 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints">400 €</td>
+                     <td class="playerpoints"><%= gameState.getScorePlayer2() %> €</td>
                   </tr>
                </table>
             </section>
-            <p id="round">Frage: 3 / 10</p>
+            <p id="round">Frage: <%=gameState.getRoundCounter() %> / 10</p>
          </section>
             
       <!-- Question -->
       <section id="question" aria-labelledby="questionheading">
+      		<% 	List<Answer> answers = simpleQuestion.getAllAnswers(); 
+      			int valueCount = 0;
+      		%>
+      
             <form id="questionform" action="BigJeopardyServlet" method="post">
                <h2 id="questionheading" class="accessibility">Frage</h2>
                <p id="questiontype">TUWIEN für € 300</p>
-               <p id="questiontext">Diese Lehrveranstaltungen bilden das Modul EWA.</p>
+               <p id="questiontext"><%= simpleQuestion.getText() %></p>
                <ul id="answers">
-                  <li><input name="answers" id="answer_1" value="1" type="checkbox"/><label class="tile clickable" for="answer_1">Was ist IT Strategie?</label></li>
-                  <li><input name="answers" id="answer_2" value="2" type="checkbox"/><label class="tile clickable" for="answer_2">Was ist Web Engineering?</label></li>
-                  <li><input name="answers" id="answer_3" value="3" type="checkbox"/><label class="tile clickable" for="answer_3">Was ist Semistrukturierte Daten?</label></li>
-                  <li><input name="answers" id="answer_4" value="4" type="checkbox"/><label class="tile clickable" for="answer_4">Was ist Objektorientierte Modellierung?</label></li>
+               	<%for (Answer a : answers) { %>
+               		<li><input name="answers" id="answer_<%=++valueCount %>" value=<%=valueCount %> type="checkbox"/><label class="tile clickable" for="answer_<%=valueCount %>"><%= a.getText() %></label></li>
+               	<% } %>
                </ul>
                <input id="timeleftvalue" type="hidden" value="100"/>
                <input class="greenlink formlink clickable" name="answer_submit" id="next" type="submit" value="antworten" accesskey="s"/>
