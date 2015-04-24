@@ -51,7 +51,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			HttpSession s = req.getSession();
 			User user = new UserImpl(req.getParameter("username"), Avatar.getRandomAvatar());
 			GameState gs = new GameStateImpl();
-			gs.setPlayer1(user);
+			gs.setUser(user);
 			s.setAttribute("gameState", gs);
 			s.setAttribute("user", user);
 			
@@ -101,7 +101,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			
 			GameState gs = (GameState)session.getAttribute("gameState");
 			gs.incrementRoundCounter();
-			gs.setLastNeutralChange(gs.getPlayer1().getUsername() + "hat " + currentQuestion.getCategory().getName() + " für " + currentQuestion.getValue() + " gewählt.");	
+			gs.setLastNeutralChange(gs.getUser().getUsername() + "hat " + currentQuestion.getCategory().getName() + " für " + currentQuestion.getValue() + " gewählt.");	
 			
 			if(answerUser){
 				gs.raiseScorePlayer1(currentQuestion.getValue());

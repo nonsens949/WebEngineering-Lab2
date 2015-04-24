@@ -9,6 +9,7 @@ public class GameStateImpl implements GameState {
 	int scorePlayer2;
 	int roundCounter;
 	User user;
+	Opponent opponent;
 	String lastPositiveChange;
 	String lastNegativeChange;
 	String lastNeutralChange;
@@ -17,12 +18,14 @@ public class GameStateImpl implements GameState {
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.roundCounter = 1;
+		this.opponent = new Opponent();
 	}
 	
 	public GameStateImpl(User user){
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.roundCounter = 1;
+		this.opponent = new Opponent();
 		this.user = user;
 	}
 
@@ -81,12 +84,12 @@ public class GameStateImpl implements GameState {
 	}
 
 	@Override
-	public void setPlayer1(User user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
 	@Override
-	public User getPlayer1() {
+	public User getUser() {
 		return user;
 	}
 
@@ -118,6 +121,11 @@ public class GameStateImpl implements GameState {
 	@Override
 	public void setLastNeutralChange(String lastNeutralChange) {
 		this.lastNeutralChange = lastNeutralChange;
+	}
+
+	@Override
+	public Opponent getOpponent() {
+		return opponent;
 	}
 
 }

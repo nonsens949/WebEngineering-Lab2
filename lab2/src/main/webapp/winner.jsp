@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import = "at.ac.tuwien.big.we15.lab2.api.User" %>
+<jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
     <head>
@@ -32,40 +34,42 @@
       <div role="main">
          <section id="gameinfo" aria-labelledby="winnerinfoheading">
             <h2 id="winnerinfoheading" class="accessibility">Gewinnerinformationen</h2>
-            <p class="user-info positive-change">Du hast richtig geantwortet: +1000 €</p>
-            <p class="user-info negative-change">Deadpool hat falsch geantwortet: -500 €</p>
+            <p class="user-info positive-change"><%= gameState.getLastPositiveChange() %></p>
+            <p class="user-info negative-change"><%= gameState.getLastNegativeChange() %></p>
             <section class="playerinfo leader" aria-labelledby="winnerannouncement">
-               <h3 id="winnerannouncement">Gewinner: Black Widow</h3>
-               <img class="avatar" src="img/avatar/black-widow.png" alt="Spieler-Avatar Black Widow" />
+            <% User winner = gameState.getScorePlayer1() > gameState.getScorePlayer2() ? gameState.getUser() : gameState.getOpponent(); %>
+            <% User loser = gameState.getScorePlayer1() <= gameState.getScorePlayer2() ? gameState.getUser() : gameState.getOpponent(); %>
+               <h3 id="winnerannouncement">Gewinner: <%= winner.getUsername()%></h3>
+               <img class="avatar" src="img/avatar/<%=winner.getAvatar().getImageFull() %>" alt="Spieler-Avatar <%=winner.getUsername() %>" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
-                     <td class="playername">Black Widow</td>
+                     <td class="playername"><%=winner.getUsername() %></td>
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints">€ 2000</td>
+                     <td class="playerpoints"><%= Math.max(gameState.getScorePlayer1(),gameState.getScorePlayer2()) %></td>
                   </tr>
                </table>
             </section>
             <section class="playerinfo" aria-labelledby="loserheading">
-               <h3 id="loserheading" class="accessibility">Verlierer: Deadpool</h3>
-               <img class="avatar" src="img/avatar/deadpool_head.png" alt="Spieler-Avatar Deadpool" />
+               <h3 id="loserheading" class="accessibility">Verlierer: <%= loser.getUsername() %></h3>
+               <img class="avatar" src="img/avatar/<%= loser.getAvatar().getImageHead() %>" alt="Spieler-Avatar <%=loser.getUsername() %>" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
-                     <td class="playername">Deadpool</td>
+                     <td class="playername"><%= loser.getUsername() %></td>
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints">€ 400</td>
+                     <td class="playerpoints"><%=Math.min(gameState.getScorePlayer1(), gameState.getScorePlayer2()) %></td>
                   </tr>
                </table>
             </section>
          </section>
          <section id="newgame" aria-labelledby="newgameheading">
              <h2 id="newgameheading" class="accessibility">Neues Spiel</h2>
-         	<form action="jeopardy.xhtml" method="post">
+         	<form action="BigJeopardyServlet" method="post">
                	<input class="clickable orangelink contentlink" id="new_game" type="submit" name="restart" value="Neues Spiel" />
             </form>
          </section>

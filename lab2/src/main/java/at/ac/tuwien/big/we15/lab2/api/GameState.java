@@ -1,5 +1,7 @@
 package at.ac.tuwien.big.we15.lab2.api;
 
+import at.ac.tuwien.big.we15.lab2.api.impl.Opponent;
+
 public interface GameState {
 
 	/**
@@ -75,14 +77,14 @@ public interface GameState {
 	 * @param user
 	 * 			non computer player to be set
 	 */
-	public void setPlayer1(User user);
+	public void setUser(User user);
 	
 	/**
 	 * returns the non computer player
 	 * @return
 	 * 		User who is not the computer
 	 */
-	public User getPlayer1();
+	public User getUser();
 	
 	/**
 	 * returns the last negative change as string
@@ -125,5 +127,12 @@ public interface GameState {
 	 * 			String to be set as last neutral change
 	 */
 	public void setLastNeutralChange(String lastNeutralChange);
+	
+	/**
+	 * returns the instance of the opponent
+	 * @return
+	 * 		instance of the opponent
+	 */
+	public Opponent getOpponent();
 	
 }
