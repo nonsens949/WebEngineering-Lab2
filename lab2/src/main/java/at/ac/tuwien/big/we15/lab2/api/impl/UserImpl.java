@@ -8,6 +8,10 @@ public class UserImpl implements User{
 	String username;
 	Avatar avatar;
 	
+	public UserImpl(){
+		//DEFAULT CONSTRUCTOR FOR BEAN
+	}
+	
 	public UserImpl(String username, Avatar avatar){
 		this.username = username;
 		this.avatar = avatar;

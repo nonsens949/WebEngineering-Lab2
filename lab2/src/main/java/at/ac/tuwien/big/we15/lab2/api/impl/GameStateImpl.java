@@ -9,17 +9,21 @@ public class GameStateImpl implements GameState {
 	int scorePlayer2;
 	int roundCounter;
 	User user;
+	//TODO so speichern oder anders?
+	String lastPositiveChange;
+	String lastNegativeChange;
+	String lastNeutralChange;
 	
-	public void GameStateImpl(){
+	public GameStateImpl(){
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
-		this.roundCounter = 0;
+		this.roundCounter = 1;
 	}
 	
-	public void GameStateImpl(User user){
+	public GameStateImpl(User user){
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
-		this.roundCounter = 0;
+		this.roundCounter = 1;
 		this.user = user;
 	}
 

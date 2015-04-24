@@ -2,6 +2,8 @@ package at.ac.tuwien.big.we15.lab2.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import at.ac.tuwien.big.we15.lab2.api.Category;
 import at.ac.tuwien.big.we15.lab2.api.GameState;
 import at.ac.tuwien.big.we15.lab2.api.Question;
 import at.ac.tuwien.big.we15.lab2.api.QuestionDataProvider;
+import at.ac.tuwien.big.we15.lab2.api.User;
 import at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl;
 import at.ac.tuwien.big.we15.lab2.api.impl.ServletJeopardyFactory;
 import at.ac.tuwien.big.we15.lab2.api.impl.UserImpl;
@@ -61,7 +64,9 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			//INPUT BEHANDLUNG BEI LOGIN BEI DEM BEISIPEL NOCH NICHT BENOETIGT
 			HttpSession s = req.getSession();
 			s.setAttribute("gameState", new GameStateImpl());
-			s.setAttribute("user", new UserImpl(req.getParameter("username"), Avatar.getRandomAvatar()));
+			User user = new UserImpl(req.getParameter("username"), Avatar.getRandomAvatar());
+			System.out.println(user.getAvatar().getImageHead());
+			s.setAttribute("user", user);
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}
@@ -87,36 +92,54 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 				}
 			}
 			s.setAttribute("simpleQuestion", question);
-			
-			
-			
+				
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/question.jsp");
 			dispatcher.forward(req, resp);
 		}
 		//TODO auswertung von gegebener antwort und gutrechnung auf punktekonto?
 		if(parameterNameList.contains("answer_submit")){
-			HttpSession s = req.getSession();
+			HttpSession session = req.getSession();
 			System.out.println("parameternamelist contains answer_submit");
 			
 			String[] answers = req.getParameterValues("answers");
 			ArrayList<Integer> answerList = new ArrayList<Integer>();
+			
+			ArrayList<String> answerList2 = new ArrayList<String>(Arrays.asList(req.getParameterValues("answers")));
+			
 			for(String st : answers){
 				answerList.add(Integer.parseInt(st));
 			}
 					
 			//TODO geht vielleicht schoener?
-			Question currentQuestion = (Question)s.getAttribute("simpleQuestion");
+			Question currentQuestion = (Question)session.getAttribute("simpleQuestion");
 			System.out.println("currentQuestionId = " + currentQuestion.getId());
 			System.out.println("currentQuestionText = " + currentQuestion.getText());
 			
 			List<Answer> correctAnswers = currentQuestion.getCorrectAnswers();
 			List<Answer> wrongAnswers = currentQuestion.getAllAnswers();
 			wrongAnswers.removeAll(correctAnswers);
+			
+			//nur fuer debug zwecke!
+			for(Answer a : correctAnswers){
+				System.out.println("correctanswer = " + a.getText() + " id " + a.getId());
+			}
+			for(Answer a : wrongAnswers){
+				System.out.println("wronganswer = " + a.getText() + " id " + a.getId());
+			}
+			for(String st : answerList2){
+				System.out.println("givenAnswerList2 = " + st);
+			}
+			for(String st : answers){
+				System.out.println("givenAnwswerList = " + st);
+			}
+			
+
 			boolean answerUser = (answers.length == correctAnswers.size());
 			for(Answer a : correctAnswers){
 				answerUser = (answerUser && answerList.contains(a.getId()));
 			}
-			GameState gs = (GameState)s.getAttribute("gameState");
+			GameState gs = (GameState)session.getAttribute("gameState");
+			gs.incrementRoundCounter();
 			
 			if(answerUser){
 				gs.raiseScorePlayer1(currentQuestion.getValue());
@@ -124,12 +147,33 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			else {
 				gs.reduceScorePlayer1(currentQuestion.getValue());
 			}
-			gs.incrementRoundCounter();
+			
+			if(gs.getRoundCounter() <= 10 ){
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
+				dispatcher.forward(req, resp);
+			}
+			else{
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/winner.jsp");
+				dispatcher.forward(req, resp);
+			}
+		}
+		if(parameterNameList.contains("logout")){
+			HttpSession s = req.getSession();
+			s.setAttribute("user", null);
+			s.setAttribute("gameState", null);
+			s.setAttribute("simpleQuestion", null);
+			
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
+			dispatcher.forward(req, resp);
+		}
+		if(parameterNameList.contains("restart")){
+			HttpSession s = req.getSession();
+			s.setAttribute("gameState", new GameStateImpl());
+			s.setAttribute("simpleQuestion", null);
 			
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}
-		
 	}
 	
 }

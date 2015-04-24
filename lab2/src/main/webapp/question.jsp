@@ -28,9 +28,9 @@
       <!-- Navigation -->
 		<nav role="navigation" aria-labelledby="navheading">
 			<h2 id="navheading" class="accessibility">Navigation</h2>
-			<ul>
-				<li><a class="orangelink navigationlink" id="logoutlink" title="Klicke hier um dich abzumelden" href="login.xhtml" accesskey="l">Abmelden</a></li>
-			</ul>
+			<form id="userlogout" action="BigJeopardyServlet" method="post">
+				<input name="logout" class="orangelink navigationlink" id="logoutlink" title="Klicke hier um dich abzumelden" value="Abmelden" type="submit" accesskey="l"/>
+			</form>
 		</nav>
       
       <!-- Content -->
@@ -40,7 +40,7 @@
             <h2 id="gameinfoinfoheading" class="accessibility">Spielinformationen</h2>
             <section id="firstplayer" class="playerinfo leader" aria-labelledby="firstplayerheading">
                <h3 id="firstplayerheading" class="accessibility">Führender Spieler</h3>
-               <img class="avatar" src="" alt="Spieler-Avatar Black Widow" />
+               <img class="avatar" src="img/avatar/<%= user.getAvatar().getImageHead() %>" alt="Spieler-Avatar Black Widow" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
@@ -71,17 +71,29 @@
             
       <!-- Question -->
       <section id="question" aria-labelledby="questionheading">
+      		<% //TODO ids passen wegen dem valuecount nicht mit den wirklichen ids der fragen zusammen -> valueCount durch die ids der antworten ersetzen %>
       		<% 	List<Answer> answers = simpleQuestion.getAllAnswers(); 
+      			answers.sort(new Comparator<Answer>() {
+      				@Override
+      				public int compare(Answer answer1, Answer answer2) {
+      					if(answer1.getId() == answer2.getId())
+      						return 0;
+      					else if(answer1.getId() > answer2.getId())
+      						return 1;
+      					else
+      						return -1;
+      				}
+      			});        
       			int valueCount = 0;
       		%>
       
             <form id="questionform" action="BigJeopardyServlet" method="post">
                <h2 id="questionheading" class="accessibility">Frage</h2>
-               <p id="questiontype">TUWIEN für € 300</p>
+               <p id="questiontype"><%= simpleQuestion.getCategory().getName()%> für <%= simpleQuestion.getValue() %></p>
                <p id="questiontext"><%= simpleQuestion.getText() %></p>
                <ul id="answers">
                	<%for (Answer a : answers) { %>
-               		<li><input name="answers" id="answer_<%=++valueCount %>" value=<%=valueCount %> type="checkbox"/><label class="tile clickable" for="answer_<%=valueCount %>"><%= a.getText() %></label></li>
+               		<li><input name="answers" id="answer_<%=valueCount %>" value=<%=valueCount %> type="checkbox"/><label class="tile clickable" for="answer_<%=valueCount++ %>"><%= a.getText() %></label></li>
                	<% } %>
                </ul>
                <input id="timeleftvalue" type="hidden" value="100"/>
