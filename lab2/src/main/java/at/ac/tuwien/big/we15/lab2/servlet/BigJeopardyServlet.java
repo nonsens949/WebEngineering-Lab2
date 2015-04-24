@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -21,9 +22,11 @@ import at.ac.tuwien.big.we15.lab2.api.Avatar;
 import at.ac.tuwien.big.we15.lab2.api.Category;
 import at.ac.tuwien.big.we15.lab2.api.GameState;
 import at.ac.tuwien.big.we15.lab2.api.Question;
+import at.ac.tuwien.big.we15.lab2.api.QuestionCatalog;
 import at.ac.tuwien.big.we15.lab2.api.QuestionDataProvider;
 import at.ac.tuwien.big.we15.lab2.api.User;
 import at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl;
+import at.ac.tuwien.big.we15.lab2.api.impl.JeopardyQuestionCatalog;
 import at.ac.tuwien.big.we15.lab2.api.impl.ServletJeopardyFactory;
 import at.ac.tuwien.big.we15.lab2.api.impl.UserImpl;
 
@@ -55,6 +58,16 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			s.setAttribute("gameState", gs);
 			s.setAttribute("user", user);
 			
+			//Inserted by emil
+			ServletContext servletContext = getServletContext();
+			ServletJeopardyFactory factory = new ServletJeopardyFactory(servletContext);
+			QuestionDataProvider provider = factory.createQuestionDataProvider();
+			List<Category> categories = provider.getCategoryData();
+			HashSet<Integer> selectedQuestions = new HashSet<Integer>();
+			
+			s.setAttribute("questionCatalog", new JeopardyQuestionCatalog(categories, selectedQuestions));
+			//emil ende
+			
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}
@@ -64,10 +77,9 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			HttpSession s = req.getSession();
 			int questionId = Integer.parseInt(req.getParameter("question_selection"));
 			
-			ServletContext servletContext = getServletContext();
-			ServletJeopardyFactory factory = new ServletJeopardyFactory(servletContext);
-			QuestionDataProvider provider = factory.createQuestionDataProvider();
-			List<Category> categories = provider.getCategoryData();
+			QuestionCatalog catalog = (QuestionCatalog) s.getAttribute("questionCatalog");
+			
+			List<Category> categories = catalog.getCategories();
 
 			//setzt question auf die frage mit der aktuellen id
 			Question question = null;
@@ -80,6 +92,8 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 				}
 			}
 			s.setAttribute("simpleQuestion", question);
+			
+			catalog.selectQuestion(questionId);
 				
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/question.jsp");
 			dispatcher.forward(req, resp);

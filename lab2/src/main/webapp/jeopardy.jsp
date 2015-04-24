@@ -5,6 +5,7 @@
 <%@ page import = "java.util.*" %>
 <jsp:useBean id="user" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
 <jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
+<jsp:useBean id="questionCatalog" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.JeopardyQuestionCatalog"/>
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 <head>
@@ -72,10 +73,7 @@
 
          <!-- Question -->
          <% //TODO schon gewaehlte fragen nicht mehr waehlbar machen %>
-         <% ServletContext servletContext = getServletContext();
-         ServletJeopardyFactory factory = new ServletJeopardyFactory(servletContext);
-         QuestionDataProvider provider = factory.createQuestionDataProvider();
-         List<Category> categories = provider.getCategoryData(); %>
+         <% List<Category> categories = questionCatalog.getCategories(); %>
          <section id="question-selection" aria-labelledby="questionheading">
             <h2 id="questionheading" class="black accessibility">Jeopardy</h2>
             <p class="user-info positive-change"><%= gameState.getLastPositiveChange() %></p>
@@ -92,7 +90,7 @@
       				<% 
       				List<Question> question = cat.getQuestions();
       					for(Question q : question){ %>
-      						<li><input name="question_selection" id="question_<%= ++questionCount %>" value="<%=questionCount %>" type="radio"/><label class="tile clickable" for="question_<%=questionCount %>"><%=q.getValue() %></label></li>
+      						<li><input name="question_selection" id="question_<%= ++questionCount %>" value="<%=questionCount %>" type="radio"<%= questionCatalog.questionSelected(q.getId()) ? "disabled= 'disabled'" : ""%>/><label class="tile clickable" for="question_<%=questionCount %>"><%=q.getValue() %></label></li>
       				<%	} %>
       			</ol>
       			</section>
