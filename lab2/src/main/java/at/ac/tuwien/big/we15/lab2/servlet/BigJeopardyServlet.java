@@ -15,12 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import at.ac.tuwien.big.we15.lab2.api.Answer;
+import at.ac.tuwien.big.we15.lab2.api.Avatar;
 import at.ac.tuwien.big.we15.lab2.api.Category;
 import at.ac.tuwien.big.we15.lab2.api.GameState;
 import at.ac.tuwien.big.we15.lab2.api.Question;
 import at.ac.tuwien.big.we15.lab2.api.QuestionDataProvider;
 import at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl;
 import at.ac.tuwien.big.we15.lab2.api.impl.ServletJeopardyFactory;
+import at.ac.tuwien.big.we15.lab2.api.impl.UserImpl;
 
 public class BigJeopardyServlet extends HttpServlet implements Servlet {
 
@@ -59,6 +61,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			//INPUT BEHANDLUNG BEI LOGIN BEI DEM BEISIPEL NOCH NICHT BENOETIGT
 			HttpSession s = req.getSession();
 			s.setAttribute("gameState", new GameStateImpl());
+			s.setAttribute("user", new UserImpl(req.getParameter("username"), Avatar.getRandomAvatar()));
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}

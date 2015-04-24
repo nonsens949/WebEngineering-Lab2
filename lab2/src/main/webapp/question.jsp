@@ -4,6 +4,7 @@
 <%@ page import = "at.ac.tuwien.big.we15.lab2.api.Answer" %>
 <jsp:useBean id="simpleQuestion" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.SimpleQuestion"/>
 <jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
+<jsp:useBean id="user" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" lang="de">
 <head>
@@ -39,11 +40,11 @@
             <h2 id="gameinfoinfoheading" class="accessibility">Spielinformationen</h2>
             <section id="firstplayer" class="playerinfo leader" aria-labelledby="firstplayerheading">
                <h3 id="firstplayerheading" class="accessibility">Führender Spieler</h3>
-               <img class="avatar" src="img/avatar/black-widow_head.png" alt="Spieler-Avatar Black Widow" />
+               <img class="avatar" src="" alt="Spieler-Avatar Black Widow" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
-                     <td class="playername">Black Widow (Du)</td>
+                     <td class="playername"><%= user.getUsername() %></td>
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>

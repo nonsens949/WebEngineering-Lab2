@@ -1,17 +1,26 @@
 package at.ac.tuwien.big.we15.lab2.api.impl;
 
 import at.ac.tuwien.big.we15.lab2.api.GameState;
+import at.ac.tuwien.big.we15.lab2.api.User;
 
 public class GameStateImpl implements GameState {
 	
 	int scorePlayer1;
 	int scorePlayer2;
 	int roundCounter;
+	User user;
 	
 	public void GameStateImpl(){
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.roundCounter = 0;
+	}
+	
+	public void GameStateImpl(User user){
+		this.scorePlayer1 = 0;
+		this.scorePlayer2 = 0;
+		this.roundCounter = 0;
+		this.user = user;
 	}
 
 	@Override
@@ -67,6 +76,16 @@ public class GameStateImpl implements GameState {
 	@Override
 	public void reduceScorePlayer2(int score) {
 		this.scorePlayer2 -= score;
+	}
+
+	@Override
+	public void setPlayer1(User user) {
+		this.user = user;
+	}
+
+	@Override
+	public User getPlayer1() {
+		return user;
 	}
 
 }

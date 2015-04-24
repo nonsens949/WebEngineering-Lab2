@@ -70,4 +70,18 @@ public interface GameState {
 	 */
 	public int getRoundCounter();
 	
+	/**
+	 * sets the non computer player to the param user
+	 * @param user
+	 * 			non computer player to be set
+	 */
+	public void setPlayer1(User user);
+	
+	/**
+	 * returns the non computer player
+	 * @return
+	 * 		User who is not the computer
+	 */
+	public User getPlayer1();
+	
 }
