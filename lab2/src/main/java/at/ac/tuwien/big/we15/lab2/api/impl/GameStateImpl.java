@@ -9,7 +9,6 @@ public class GameStateImpl implements GameState {
 	int scorePlayer2;
 	int roundCounter;
 	User user;
-	//TODO so speichern oder anders?
 	String lastPositiveChange;
 	String lastNegativeChange;
 	String lastNeutralChange;
@@ -36,7 +35,6 @@ public class GameStateImpl implements GameState {
 	@Override
 	public void raiseScorePlayer1(int score) {
 		this.scorePlayer1 += score;
-		System.out.println("score raised player 1, score = " + this.scorePlayer1);
 		
 	}
 	
@@ -90,6 +88,36 @@ public class GameStateImpl implements GameState {
 	@Override
 	public User getPlayer1() {
 		return user;
+	}
+
+	@Override
+	public String getLastPositiveChange() {
+		return lastPositiveChange;
+	}
+
+	@Override
+	public String getLastNegativeChange() {
+		return lastNegativeChange;
+	}
+
+	@Override
+	public String getLastNeutralChange() {
+		return lastNeutralChange;
+	}
+
+	@Override
+	public void setLastPositiveChange(String lastPositiveChange) {
+		this.lastPositiveChange = lastPositiveChange;
+	}
+
+	@Override
+	public void setLastNegativeChange(String lastNegativeChange) {
+		this.lastNegativeChange = lastNegativeChange;	
+	}
+
+	@Override
+	public void setLastNeutralChange(String lastNeutralChange) {
+		this.lastNeutralChange = lastNeutralChange;
 	}
 
 }

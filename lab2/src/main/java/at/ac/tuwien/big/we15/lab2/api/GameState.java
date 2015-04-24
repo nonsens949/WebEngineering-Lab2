@@ -84,4 +84,46 @@ public interface GameState {
 	 */
 	public User getPlayer1();
 	
+	/**
+	 * returns the last negative change as string
+	 * @return
+	 * 		String wich contains the last negative change
+	 */
+	public String getLastPositiveChange();
+	
+	/**
+	 * returns the last positive change as string
+	 * @return
+	 * 		String wich contains the last positive change
+	 */
+	public String getLastNegativeChange();
+	
+	/**
+	 * returns the last neutral change as string
+	 * @return
+	 * 		String wich contains the last neutral change
+	 */
+	public String getLastNeutralChange();
+	
+	/**
+	 * sets the last positive change as string
+	 * @param lastPositiveChange
+	 * 			String to be set as last positive change
+	 */
+	public void setLastPositiveChange(String lastPositiveChange);
+	
+	/**
+	 * sets the last neutral change as string
+	 * @param lastNegativeChange
+	 * 			String to be set as last negative change
+	 */
+	public void setLastNegativeChange(String lastNegativeChange);
+	
+	/**
+	 * sets the last neutral change as string
+	 * @param lastNeutralChange
+	 * 			String to be set as last neutral change
+	 */
+	public void setLastNeutralChange(String lastNeutralChange);
+	
 }

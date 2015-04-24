@@ -31,57 +31,45 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 
 	@Override
 	public void init() throws ServletException {
-		//Initializations
 		super.init();
-		System.out.println("init servlet");
 		String p = getInitParameter("initpara1");
 	}
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//called by server (via service method) to allow the servlet to handle a GET request
-		System.out.println("doGet in servlet");
 		Enumeration<String> enumNames = req.getParameterNames();
-		while(enumNames.hasMoreElements()){
-			System.out.println(enumNames.nextElement());
-		}
 	}
 	
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//TODO
-		System.out.println("doPost in servlet");
-		Enumeration<String> enumNames = req.getParameterNames();
-		ArrayList<String> parameterNameList = new ArrayList<String>();
-		while(enumNames.hasMoreElements()){
-			parameterNameList.add(enumNames.nextElement());
-		}
-		for(String s : parameterNameList){
-			System.out.println("parameternamelist : " + s);
-		}
+
+		ArrayList<String> parameterNameList = Collections.list(req.getParameterNames());
+
+		//in login.jsp wurde auf login geklickt
 		if(parameterNameList.contains("login")){
-			System.out.println("input name= login ");
-			//INPUT BEHANDLUNG BEI LOGIN BEI DEM BEISIPEL NOCH NICHT BENOETIGT
 			HttpSession s = req.getSession();
-			s.setAttribute("gameState", new GameStateImpl());
 			User user = new UserImpl(req.getParameter("username"), Avatar.getRandomAvatar());
-			System.out.println(user.getAvatar().getImageHead());
+			GameState gs = new GameStateImpl();
+			gs.setPlayer1(user);
+			s.setAttribute("gameState", gs);
 			s.setAttribute("user", user);
+			
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);
 		}
-		//TODO in doGet() verschieben was in doGet() gehoert
+		//in jeopardy.jsp wurde eine frage ausgewaehlt
 		if(parameterNameList.contains("question_submit")){
-			System.out.println("parameterNameList contains question_submit");
+
 			HttpSession s = req.getSession();
 			int questionId = Integer.parseInt(req.getParameter("question_selection"));
-			// ServletContext coming from javax.servlet.GenericServlet or subclass
+			
 			ServletContext servletContext = getServletContext();
 			ServletJeopardyFactory factory = new ServletJeopardyFactory(servletContext);
 			QuestionDataProvider provider = factory.createQuestionDataProvider();
 			List<Category> categories = provider.getCategoryData();
-			// category has name and holds questions
-			// questions have attributes and answers
+
+			//setzt question auf die frage mit der aktuellen id
 			Question question = null;
 			for(Category c : categories){
 				List<Question> questionList = c.getQuestions();
@@ -96,56 +84,32 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/question.jsp");
 			dispatcher.forward(req, resp);
 		}
-		//TODO auswertung von gegebener antwort und gutrechnung auf punktekonto?
+		//in question.jsp wurde eine antwort gegeben
 		if(parameterNameList.contains("answer_submit")){
 			HttpSession session = req.getSession();
-			System.out.println("parameternamelist contains answer_submit");
 			
-			String[] answers = req.getParameterValues("answers");
-			ArrayList<Integer> answerList = new ArrayList<Integer>();
-			
-			ArrayList<String> answerList2 = new ArrayList<String>(Arrays.asList(req.getParameterValues("answers")));
-			
-			for(String st : answers){
-				answerList.add(Integer.parseInt(st));
-			}
-					
-			//TODO geht vielleicht schoener?
-			Question currentQuestion = (Question)session.getAttribute("simpleQuestion");
-			System.out.println("currentQuestionId = " + currentQuestion.getId());
-			System.out.println("currentQuestionText = " + currentQuestion.getText());
-			
-			List<Answer> correctAnswers = currentQuestion.getCorrectAnswers();
-			List<Answer> wrongAnswers = currentQuestion.getAllAnswers();
-			wrongAnswers.removeAll(correctAnswers);
-			
-			//nur fuer debug zwecke!
-			for(Answer a : correctAnswers){
-				System.out.println("correctanswer = " + a.getText() + " id " + a.getId());
-			}
-			for(Answer a : wrongAnswers){
-				System.out.println("wronganswer = " + a.getText() + " id " + a.getId());
-			}
-			for(String st : answerList2){
-				System.out.println("givenAnswerList2 = " + st);
-			}
-			for(String st : answers){
-				System.out.println("givenAnwswerList = " + st);
-			}
-			
+			ArrayList<String> answerList = new ArrayList<String>(Arrays.asList(req.getParameterValues("answers")));
 
-			boolean answerUser = (answers.length == correctAnswers.size());
+			Question currentQuestion = (Question)session.getAttribute("simpleQuestion");		
+			List<Answer> correctAnswers = currentQuestion.getCorrectAnswers();	
+
+			//wertet die vom user gegebene antwort aus		
+			boolean answerUser = answerList.size() == correctAnswers.size();
 			for(Answer a : correctAnswers){
-				answerUser = (answerUser && answerList.contains(a.getId()));
+				answerUser = (answerUser && answerList.contains(((Integer)a.getId()).toString()));
 			}
+			
 			GameState gs = (GameState)session.getAttribute("gameState");
 			gs.incrementRoundCounter();
+			gs.setLastNeutralChange(gs.getPlayer1().getUsername() + "hat " + currentQuestion.getCategory().getName() + " für " + currentQuestion.getValue() + " gewählt.");	
 			
 			if(answerUser){
 				gs.raiseScorePlayer1(currentQuestion.getValue());
+				gs.setLastPositiveChange("Du hast richtig geantwortet: + " + currentQuestion.getValue() + ".");
 			} 
 			else {
 				gs.reduceScorePlayer1(currentQuestion.getValue());
+				gs.setLastNegativeChange("Du hast falsch geantwortet: - " + currentQuestion.getValue() + ".");
 			}
 			
 			if(gs.getRoundCounter() <= 10 ){
@@ -157,6 +121,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 				dispatcher.forward(req, resp);
 			}
 		}
+		//in einem jsp wurde auf logout geklickt
 		if(parameterNameList.contains("logout")){
 			HttpSession s = req.getSession();
 			s.setAttribute("user", null);
@@ -166,6 +131,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
 			dispatcher.forward(req, resp);
 		}
+		//in winner.jsp wurde auf neues spiel geklickt
 		if(parameterNameList.contains("restart")){
 			HttpSession s = req.getSession();
 			s.setAttribute("gameState", new GameStateImpl());

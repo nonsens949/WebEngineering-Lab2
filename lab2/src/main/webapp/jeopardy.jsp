@@ -78,9 +78,9 @@
          List<Category> categories = provider.getCategoryData(); %>
          <section id="question-selection" aria-labelledby="questionheading">
             <h2 id="questionheading" class="black accessibility">Jeopardy</h2>
-            <p class="user-info positive-change">Du hast richtig geantwortet: +1000 €</p>
-            <p class="user-info negative-change">Deadpool hat falsch geantwortet: -500 €</p>
-            <p class="user-info">Deadpool hat TUWIEN für € 1000 gewählt.</p>
+            <p class="user-info positive-change"><%= gameState.getLastPositiveChange() %></p>
+            <p class="user-info negative-change"><%= gameState.getLastNegativeChange() %></p>
+            <p class="user-info"><%= gameState.getLastNeutralChange() %></p>
             <form id="questionform" action="BigJeopardyServlet" method="post">
             <% int questionCount = 0; %>
                <fieldset>
