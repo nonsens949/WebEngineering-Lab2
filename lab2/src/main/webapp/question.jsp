@@ -84,7 +84,6 @@
       						return -1;
       				}
       			});        
-      			int valueCount = 0;
       		%>
       
             <form id="questionform" action="BigJeopardyServlet" method="post">
@@ -93,7 +92,7 @@
                <p id="questiontext"><%= simpleQuestion.getText() %></p>
                <ul id="answers">
                	<%for (Answer a : answers) { %>
-               		<li><input name="answers" id="answer_<%=valueCount %>" value=<%=valueCount %> type="checkbox"/><label class="tile clickable" for="answer_<%=valueCount++ %>"><%= a.getText() %></label></li>
+               		<li><input name="answers" id="answer_<%=a.getId() %>" value=<%=a.getId() %> type="checkbox"/><label class="tile clickable" for="answer_<%=a.getId() %>"><%= a.getText() %></label></li>
                	<% } %>
                </ul>
                <input id="timeleftvalue" type="hidden" value="100"/>
