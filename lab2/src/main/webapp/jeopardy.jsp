@@ -98,7 +98,7 @@
       			</section>
       			<%} %>
                </fieldset>               
-               <input class="greenlink formlink clickable" name="question_submit" id="next" type="submit" value="wählen" accesskey="s" />
+               <input class="greenlink formlink clickable" name="question_submit" id="next" type="submit" value="wählen" accesskey="s" disabled="disabled"/>
             </form>
          </section>
          
@@ -130,6 +130,19 @@
             	}
             });            
             //]]>
+        </script>
+        
+        <!-- Submit button is set to disabled as default. When a question is chosen the button will be enabled  -->
+        <script type="text/javascript">
+        
+        	$(function() {
+        		
+        		$("input[name='question_selection']").change(function() {
+        			
+        			$("input[id='next']").removeAttr("disabled");
+        		});
+        	});
+        
         </script>
      
     </body>

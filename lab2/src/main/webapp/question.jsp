@@ -97,7 +97,7 @@
                	<% } %>
                </ul>
                <input id="timeleftvalue" type="hidden" value="100"/>
-               <input class="greenlink formlink clickable" name="answer_submit" id="next" type="submit" value="antworten" accesskey="s"/>
+               <input class="greenlink formlink clickable" name="answer_submit" id="next" type="submit" value="antworten" accesskey="s" disabled="disabled"/>
             </form>
          </section>
             
@@ -151,6 +151,25 @@
             window.setInterval(timeStep, 1000);
             
             //]]>
+        </script>
+        
+        
+        <!-- Submit button is set to disabled as default. When at least one answer is chosen the button will be enabled  -->
+        <script type="text/javascript">
+        
+        	$(function() {
+        		
+        	    submitAnswers = $("input[id='next']");
+        		
+        		if ($(":checkbox[name='answers']", ("form[id='questionform']")).is(":checked"))
+        		{
+        			submitAnswers.removeAttr("disabled");
+        		}
+        		else {
+        			submitAnswers.setAttribute("disabled", "disabled");
+        		};
+        	});
+        
         </script>
     </body>
 </html>
