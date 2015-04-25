@@ -159,15 +159,19 @@
         
         	$(function() {
         		
-        	    submitAnswers = $("input[id='next']");
-        		
-        		if ($(":checkbox[name='answers']", ("form[id='questionform']")).is(":checked"))
-        		{
-        			submitAnswers.removeAttr("disabled");
-        		}
-        		else {
-        			submitAnswers.setAttribute("disabled", "disabled");
-        		};
+					$("form").change(function() {
+					
+					submitAnswers = $("input[id='next']");
+        			
+	        		if ($(":checkbox[name='answers']", ("form[id='questionform']")).is(":checked"))
+	        		{
+	        			submitAnswers.attr("disabled", false);
+	        		}
+	        		else {
+	        			submitAnswers.attr("disabled", true);
+	        		};
+        		});		
+
         	});
         
         </script>
