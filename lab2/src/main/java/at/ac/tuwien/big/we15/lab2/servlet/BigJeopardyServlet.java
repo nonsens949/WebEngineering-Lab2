@@ -17,19 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import at.ac.tuwien.big.we15.lab2.api.Answer;
-import at.ac.tuwien.big.we15.lab2.api.Avatar;
-import at.ac.tuwien.big.we15.lab2.api.Category;
-import at.ac.tuwien.big.we15.lab2.api.GameStatus;
-import at.ac.tuwien.big.we15.lab2.api.Question;
-import at.ac.tuwien.big.we15.lab2.api.QuestionCatalog;
-import at.ac.tuwien.big.we15.lab2.api.QuestionDataProvider;
-import at.ac.tuwien.big.we15.lab2.api.User;
-import at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl;
-import at.ac.tuwien.big.we15.lab2.api.impl.JeopardyGameStatus;
-import at.ac.tuwien.big.we15.lab2.api.impl.JeopardyQuestionCatalog;
-import at.ac.tuwien.big.we15.lab2.api.impl.ServletJeopardyFactory;
-import at.ac.tuwien.big.we15.lab2.api.impl.UserImpl;
+import at.ac.tuwien.big.we15.lab2.api.*;
+import at.ac.tuwien.big.we15.lab2.api.impl.*;
 
 public class BigJeopardyServlet extends HttpServlet implements Servlet {
 
@@ -64,6 +53,8 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			
 			GameStatus status = new JeopardyGameStatus();
 			s.setAttribute("gameStatus", status);
+			OpponentStrategy strategy = new SimpleOpponentStrategy();
+			s.setAttribute("strategy", strategy);
 			
 			//Inserted by emil
 			ServletContext servletContext = getServletContext();
@@ -107,7 +98,30 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 		}
 		//in question.jsp wurde eine antwort gegeben
 		if(parameterNameList.contains("answer_submit")){
+			
 			HttpSession session = req.getSession();
+			
+			GameStatus status = (GameStatus) session.getAttribute("gameStatus");
+			QuestionCatalog catalog = (QuestionCatalog) session.getAttribute("questionCatalog");
+			/*
+			 * Hier einmal vorläufig eingebaut: Computer wählt Frage aus im moment immer nach spieler
+			 */
+			
+			OpponentStrategy strategy = (OpponentStrategy) session.getAttribute("strategy");
+			/*
+			Question selectedQuestion = strategy.nextQuestion(catalog, status.getPlayer1Score(), status.getPlayer2Score(), status.getRound());
+			
+			if (strategy.answerQuestion(selectedQuestion)) {
+				
+				status.setPlayer2Score(status.getPlayer2Score() + selectedQuestion.getValue());
+				
+			} else {
+				
+				status.setPlayer2Score(status.getPlayer2Score() - selectedQuestion.getValue());
+			}*/
+			/*
+			 * 
+			 */
 			
 			ArrayList<String> answerList = new ArrayList<String>(Arrays.asList(req.getParameterValues("answers")));
 
@@ -143,7 +157,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 				dispatcher.forward(req, resp);
 			}*/
 			
-			GameStatus status = (GameStatus) session.getAttribute("gameStatus");
+			
 			status.incrementRound();
 			status.setPlayer1Value(currentQuestion.getValue());
 			status.setPlayer1Answer(answerUser);
@@ -181,8 +195,13 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 		//in winner.jsp wurde auf neues spiel geklickt
 		if(parameterNameList.contains("restart")){
 			HttpSession s = req.getSession();
-			s.setAttribute("gameState", new GameStateImpl());
+			//s.setAttribute("gameState", new GameStateImpl());
 			s.setAttribute("simpleQuestion", null);
+			
+			GameStatus status = new JeopardyGameStatus();
+			s.setAttribute("gameStatus", status);
+			QuestionCatalog catalog = (QuestionCatalog) s.getAttribute("questionCatalog");
+			catalog.getSelectedQuestions().clear();
 			
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jeopardy.jsp");
 			dispatcher.forward(req, resp);

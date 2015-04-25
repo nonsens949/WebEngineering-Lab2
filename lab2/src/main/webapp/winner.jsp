@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import = "at.ac.tuwien.big.we15.lab2.api.User" %>
-<jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
+<jsp:useBean id="gameStatus" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.JeopardyGameStatus"/>
+<jsp:useBean id="user" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
+<jsp:useBean id="opponent" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
     <head>
@@ -34,11 +36,13 @@
       <div role="main">
          <section id="gameinfo" aria-labelledby="winnerinfoheading">
             <h2 id="winnerinfoheading" class="accessibility">Gewinnerinformationen</h2>
-            <p class="user-info positive-change"><%= gameState.getLastPositiveChange() %></p>
-            <p class="user-info negative-change"><%= gameState.getLastNegativeChange() %></p>
+            <% boolean p1correct = gameStatus.getPlayer1Answer(); 
+            	boolean p2correct = gameStatus.getPlayer2Answer();  %>
+            <<p class="user-info <%= p1correct ?  "positive-change" : "negative-change" %>">Du hast <%= p1correct ? "richtig" : "falsch" %> geantwortet: <%= p1correct ? "+" : "-" %><%= gameStatus.getPlayer1Value() %> €</p>
+            <p class="user-info <%= p2correct ?  "positive-change" : "negative-change" %>"><%= opponent.getUsername() %> hat <%= p2correct ? "richtig" : "falsch" %> geantwortet: <%= p2correct ? "+" : "-" %><%= gameStatus.getPlayer2Value() %> €</p>
             <section class="playerinfo leader" aria-labelledby="winnerannouncement">
-            <% User winner = gameState.getScorePlayer1() > gameState.getScorePlayer2() ? gameState.getUser() : gameState.getOpponent(); %>
-            <% User loser = gameState.getScorePlayer1() <= gameState.getScorePlayer2() ? gameState.getUser() : gameState.getOpponent(); %>
+            <% User winner = gameStatus.getPlayer1Score() > gameStatus.getPlayer2Score() ? user : opponent; %>
+            <% User loser = gameStatus.getPlayer1Score() <= gameStatus.getPlayer2Score() ? user : opponent; %>
                <h3 id="winnerannouncement">Gewinner: <%= winner.getUsername()%></h3>
                <img class="avatar" src="img/avatar/<%=winner.getAvatar().getImageFull() %>" alt="Spieler-Avatar <%=winner.getUsername() %>" />
                <table>
@@ -48,7 +52,7 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints"><%= Math.max(gameState.getScorePlayer1(),gameState.getScorePlayer2()) %></td>
+                     <td class="playerpoints"><%= Math.max(gameStatus.getPlayer1Score(), gameStatus.getPlayer2Score()) %></td>
                   </tr>
                </table>
             </section>
@@ -62,7 +66,7 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints"><%=Math.min(gameState.getScorePlayer1(), gameState.getScorePlayer2()) %></td>
+                     <td class="playerpoints"><%=Math.min(gameStatus.getPlayer1Score(), gameStatus.getPlayer2Score()) %></td>
                   </tr>
                </table>
             </section>
