@@ -4,7 +4,8 @@
 <%@ page import = "at.ac.tuwien.big.we15.lab2.api.impl.*" %>
 <%@ page import = "java.util.*" %>
 <jsp:useBean id="user" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
-<jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
+<jsp:useBean id="opponent" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
+<jsp:useBean id="gameStatus" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.JeopardyGameStatus"/>
 <jsp:useBean id="questionCatalog" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.JeopardyQuestionCatalog"/>
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
@@ -50,37 +51,38 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints"><%=gameState.getScorePlayer1() %></td>
+                     <td class="playerpoints"><%= gameStatus.getPlayer1Score() %> €</td>
                   </tr>
                </table>
             </section>
             <section id="secondplayer" class="playerinfo" aria-labelledby="secondplayerheading">
                <h3 id="secondplayerheading" class="accessibility">Zweiter Spieler</h3>
-               <img class="avatar" src="img/avatar/deadpool_head.png" alt="Spieler-Avatar Deadpool" />
+               <img class="avatar" src="img/avatar/<%=opponent.getAvatar().getImageHead() %>" alt="Spieler-Avatar <%= opponent.getUsername() %>" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
-                     <td class="playername">Deadpool</td>
+                     <td class="playername"><%= opponent.getUsername() %></td>
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints">400 €</td>
+                     <td class="playerpoints"><%= gameStatus.getPlayer2Score() %> €</td>
                   </tr>
                </table>
             </section>
-            <p id="round">Fragen: <%=gameState.getRoundCounter() %> / 10</p>
+            <p id="round">Fragen: <%= gameStatus.getRound() %> / 10</p>
          </section>
 
          <!-- Question -->
          <% //TODO schon gewaehlte fragen nicht mehr waehlbar machen %>
          <% List<Category> categories = questionCatalog.getCategories(); %>
+        	<% boolean p1correct = gameStatus.getPlayer1Answer(); 
+            	boolean p2correct = gameStatus.getPlayer2Answer();  %>
          <section id="question-selection" aria-labelledby="questionheading">
             <h2 id="questionheading" class="black accessibility">Jeopardy</h2>
-            <p class="user-info positive-change"><%= gameState.getLastPositiveChange() %></p>
-            <p class="user-info negative-change"><%= gameState.getLastNegativeChange() %></p>
-            <p class="user-info"><%= gameState.getLastNeutralChange() %></p>
+            <p class="user-info <%= p1correct ?  "positive-change" : "negative-change" %>">Du hast <%= p1correct ? "richtig" : "falsch" %> geantwortet: <%= p1correct ? "+" : "-" %><%= gameStatus.getPlayer1Value() %> €</p>
+            <p class="user-info <%= p2correct ?  "positive-change" : "negative-change" %>"><%= opponent.getUsername() %> hat <%= p2correct ? "richtig" : "falsch" %> geantwortet: <%= p2correct ? "+" : "-" %><%= gameStatus.getPlayer2Value() %> €</p>
+            <p class="user-info"><%= opponent.getUsername() %> hat <%= gameStatus.getPlayer2Category() %> für € <%= gameStatus.getPlayer2Value() %> gewählt.</p>
             <form id="questionform" action="BigJeopardyServlet" method="post">
-            <% int questionCount = 0; %>
                <fieldset>
                <legend class="accessibility">Fragenauswahl</legend>
                 <%for (Category cat : categories){ %>
@@ -90,7 +92,7 @@
       				<% 
       				List<Question> question = cat.getQuestions();
       					for(Question q : question){ %>
-      						<li><input name="question_selection" id="question_<%= ++questionCount %>" value="<%=questionCount %>" type="radio"<%= questionCatalog.questionSelected(q.getId()) ? "disabled= 'disabled'" : ""%>/><label class="tile clickable" for="question_<%=questionCount %>"><%=q.getValue() %></label></li>
+      						<li><input name="question_selection" id="question_<%= q.getId() %>" value="<%= q.getId() %>" type="radio"<%= questionCatalog.questionSelected(q.getId()) ? "disabled= 'disabled'" : ""%>/><label class="tile clickable" for="question_<%= q.getId() %>"><%=q.getValue() %></label></li>
       				<%	} %>
       			</ol>
       			</section>

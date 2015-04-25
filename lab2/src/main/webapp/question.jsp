@@ -3,8 +3,9 @@
 <%@ page import = "java.util.*" %>
 <%@ page import = "at.ac.tuwien.big.we15.lab2.api.Answer" %>
 <jsp:useBean id="simpleQuestion" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.SimpleQuestion"/>
-<jsp:useBean id="gameState" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.GameStateImpl"/>
+<jsp:useBean id="gameStatus" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.JeopardyGameStatus"/>
 <jsp:useBean id="user" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
+<jsp:useBean id="opponent" scope="session" class="at.ac.tuwien.big.we15.lab2.api.impl.UserImpl"/>
 <!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" lang="de">
 <head>
@@ -40,7 +41,7 @@
             <h2 id="gameinfoinfoheading" class="accessibility">Spielinformationen</h2>
             <section id="firstplayer" class="playerinfo leader" aria-labelledby="firstplayerheading">
                <h3 id="firstplayerheading" class="accessibility">Führender Spieler</h3>
-               <img class="avatar" src="img/avatar/<%= user.getAvatar().getImageHead() %>" alt="Spieler-Avatar Black Widow" />
+               <img class="avatar" src="img/avatar/<%= user.getAvatar().getImageHead() %>" alt="<%= user.getAvatar().getName() %>" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
@@ -48,30 +49,30 @@
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints"><%= gameState.getScorePlayer1() %></td>
+                     <td class="playerpoints"><%= gameStatus.getPlayer1Score() %> €</td>
                   </tr>
                </table>
             </section>
             <section id="secondplayer" class="playerinfo" aria-labelledby="secondplayerheading">
                <h3 id="secondplayerheading" class="accessibility">Zweiter Spieler</h3>
-               <img class="avatar" src="img/avatar/deadpool_head.png" alt="Spieler-Avatar Deadpool" />
+               <img class="avatar" src="img/avatar/<%=opponent.getAvatar().getImageHead() %>" alt="Spieler-Avatar <%= opponent.getUsername() %>" />
                <table>
                   <tr>
                      <th class="accessibility">Spielername</th>
-                     <td class="playername">Deadpool</td>
+                     <td class="playername"><%= opponent.getUsername() %></td>
                   </tr>
                   <tr>
                      <th class="accessibility">Spielerpunkte</th>
-                     <td class="playerpoints"><%= gameState.getScorePlayer2() %> €</td>
+                     <td class="playerpoints"><%= gameStatus.getPlayer2Score() %> €</td>
                   </tr>
                </table>
             </section>
-            <p id="round">Frage: <%=gameState.getRoundCounter() %> / 10</p>
+            <p id="round">Frage: <%=gameStatus.getRound() %> / 10</p>
          </section>
             
       <!-- Question -->
       <section id="question" aria-labelledby="questionheading">
-      		<% //TODO ids passen wegen dem valuecount nicht mit den wirklichen ids der fragen zusammen -> valueCount durch die ids der antworten ersetzen %>
+      
       		<% 	List<Answer> answers = simpleQuestion.getAllAnswers(); 
       			answers.sort(new Comparator<Answer>() {
       				@Override

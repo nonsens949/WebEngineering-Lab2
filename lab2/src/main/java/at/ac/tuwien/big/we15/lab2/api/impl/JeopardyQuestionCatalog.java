@@ -24,26 +24,32 @@ public class JeopardyQuestionCatalog implements QuestionCatalog {
 		this.setSelectedQuestions(selectedQuestions);
 	}
 
+	@Override
 	public List<Category> getCategories() {
 		return categories;
 	}
 
+	@Override
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
 
+	@Override
 	public HashSet<Integer> getSelectedQuestions() {
 		return selectedQuestions;
 	}
 
+	@Override
 	public void setSelectedQuestions(HashSet<Integer> selectedQuestions) {
 		this.selectedQuestions = selectedQuestions;
 	}
 	
+	@Override
 	public void selectQuestion(int questionId) {
 		selectedQuestions.add(questionId);
 	}
 	
+	@Override
 	public boolean questionSelected(int questionId) {
 		return selectedQuestions.contains(questionId);
 	}
