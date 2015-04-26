@@ -38,7 +38,7 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		ArrayList<String> parameterNameList = Collections.list(req.getParameterNames());
-
+		
 		//in login.jsp wurde auf login geklickt
 		if(parameterNameList.contains("login")){
 			HttpSession s = req.getSession();
@@ -92,12 +92,57 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			s.setAttribute("simpleQuestion", question);
 			
 			catalog.selectQuestion(questionId);
+			
+			OpponentStrategy strategy = (OpponentStrategy) s.getAttribute("strategy");
+			GameStatus status = (GameStatus) s.getAttribute("gameStatus");
+			
+			if (catalog.getSelectedQuestions().size()%2 == 1) {
+				
+				Question kiQuestion = strategy.nextQuestion(catalog, status);
+				
+				catalog.selectQuestion(kiQuestion.getId());
+				status.setPlayer2Value(kiQuestion.getValue());
+				status.setPlayer2Category(kiQuestion.getCategory().getName());
+				boolean answerKi = strategy.answerQuestion(kiQuestion);
+				
+				status.setPlayer2Answer(answerKi);
+				
+				if (answerKi) {
+					
+					status.setPlayer2Score(status.getPlayer2Score() + kiQuestion.getValue());
+					
+				} else {
+					
+					status.setPlayer2Score(status.getPlayer2Score() - kiQuestion.getValue());
+				}
+			}
+			
+			if (status.getPlayer1Score() > status.getPlayer2Score()) {
+				
+				Question kiQuestion = strategy.nextQuestion(catalog, status);
+				
+				catalog.selectQuestion(kiQuestion.getId());
+				status.setPlayer2Value(kiQuestion.getValue());
+				status.setPlayer2Category(kiQuestion.getCategory().getName());
+				boolean answerKi = strategy.answerQuestion(kiQuestion);
+				
+				status.setPlayer2Answer(answerKi);
+				
+				if (answerKi) {
+					
+					status.setPlayer2Score(status.getPlayer2Score() + kiQuestion.getValue());
+					
+				} else {
+					
+					status.setPlayer2Score(status.getPlayer2Score() - kiQuestion.getValue());
+				}
+			}
 				
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/question.jsp");
 			dispatcher.forward(req, resp);
 		}
 		//in question.jsp wurde eine antwort gegeben
-		if(parameterNameList.contains("answer_submit")){
+		if(parameterNameList.contains("answers")||parameterNameList.isEmpty()){
 			
 			HttpSession session = req.getSession();
 			
@@ -123,8 +168,14 @@ public class BigJeopardyServlet extends HttpServlet implements Servlet {
 			 * 
 			 */
 			
-			ArrayList<String> answerList = new ArrayList<String>(Arrays.asList(req.getParameterValues("answers")));
-
+			String [] paramVals = req.getParameterValues("answers");
+			ArrayList<String> answerList = new ArrayList<String>();
+			
+			if (paramVals != null) {
+				
+				answerList = new ArrayList<String>(Arrays.asList(paramVals));
+			}
+			
 			Question currentQuestion = (Question)session.getAttribute("simpleQuestion");
 			
 			List<Answer> correctAnswers = currentQuestion.getCorrectAnswers();	

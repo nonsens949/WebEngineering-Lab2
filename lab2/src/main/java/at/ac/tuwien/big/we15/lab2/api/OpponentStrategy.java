@@ -10,12 +10,10 @@ public interface OpponentStrategy {
 	/**
 	 * 
 	 * @param catalog
-	 * @param userScore
-	 * @param opponentScore
-	 * @param round
-	 * @return the question chosen by the opponent
+	 * @param status
+	 * @return
 	 */
-	public Question nextQuestion(QuestionCatalog catalog, int userScore, int opponentScore, int round);
+	public Question nextQuestion(QuestionCatalog catalog, GameStatus status);
 	
 	/**
 	 * 

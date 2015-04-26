@@ -40,7 +40,7 @@
             <section id="registerforward" aria-labelledby="registerheading">
                 <h2 id="registerheading" class="accessibility">Registrierung</h2>
                 <p id="registerhint">Nicht registriert?</p>
-                <a class="contentlink orangelink" title="Klicke hier um dich zu registrieren" href="register.xhtml" accesskey="r">Zur Registrierung</a>
+                <a class="contentlink orangelink" title="Klicke hier um dich zu registrieren" href="register.jsp" accesskey="r">Zur Registrierung</a>
             </section>
         </div>
 

@@ -89,7 +89,7 @@
       
             <form id="questionform" action="BigJeopardyServlet" method="post">
                <h2 id="questionheading" class="accessibility">Frage</h2>
-               <p id="questiontype"><%= simpleQuestion.getCategory().getName()%> für <%= simpleQuestion.getValue() %></p>
+               <p id="questiontype"><%= simpleQuestion.getCategory().getName()%> für <%= simpleQuestion.getValue() %> €</p>
                <p id="questiontext"><%= simpleQuestion.getText() %></p>
                <ul id="answers">
                	<%for (Answer a : answers) { %>
