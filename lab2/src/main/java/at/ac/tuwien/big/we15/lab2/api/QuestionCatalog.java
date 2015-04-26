@@ -21,4 +21,6 @@ public interface QuestionCatalog {
 	public void selectQuestion(int questionId);
 	
 	public boolean questionSelected(int questionId);
+	
+	public List<Question> getUnselectedQuestions();
 }

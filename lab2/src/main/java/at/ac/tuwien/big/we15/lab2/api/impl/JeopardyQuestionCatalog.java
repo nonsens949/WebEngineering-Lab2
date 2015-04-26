@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import at.ac.tuwien.big.we15.lab2.api.Category;
+import at.ac.tuwien.big.we15.lab2.api.Question;
 import at.ac.tuwien.big.we15.lab2.api.QuestionCatalog;
 
 public class JeopardyQuestionCatalog implements QuestionCatalog {
@@ -52,5 +53,19 @@ public class JeopardyQuestionCatalog implements QuestionCatalog {
 	@Override
 	public boolean questionSelected(int questionId) {
 		return selectedQuestions.contains(questionId);
+	}
+	
+	@Override
+	public List<Question> getUnselectedQuestions(){
+		List<Question> unselectedQuestions = new ArrayList<Question>();
+		for(Category c: categories){
+			unselectedQuestions.addAll(c.getQuestions());
+		}
+		for(Question q : unselectedQuestions){
+			if(selectedQuestions.contains(q)){
+				unselectedQuestions.remove(q);
+			}
+		}
+		return unselectedQuestions;
 	}
 }
